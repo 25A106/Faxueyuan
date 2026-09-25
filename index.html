@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1a56db">
+<title>法学院每日报班填写系统</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#eef1f6;color:#1f2937;font-size:15px;line-height:1.55;padding-bottom:30px}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,#1a56db,#3b82f6);color:#fff;padding:12px 14px;box-shadow:0 2px 10px rgba(26,86,219,.25)}
+.header-top{display:flex;align-items:center;gap:10px}
+.back-btn{display:none;background:rgba(255,255,255,.18);border:none;color:#fff;width:32px;height:32px;border-radius:9px;font-size:18px;line-height:1;cursor:pointer;align-items:center;justify-content:center;flex:none;font-family:inherit;padding:0}
+.back-btn:active{background:rgba(255,255,255,.32)}
+header h1{margin:0;font-size:16px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+header .sub{font-size:12px;opacity:.85;margin-top:2px;padding-left:0}
+.datebar{display:flex;align-items:center;gap:8px;margin-top:10px;background:rgba(255,255,255,.16);border-radius:10px;padding:6px 10px}
+.datebar label{font-size:13px;white-space:nowrap}
+.datebar input[type=date]{flex:1;border:none;border-radius:8px;padding:6px 10px;font-size:14px;background:#fff;color:#1f2937;font-family:inherit;min-width:0}
+
+.page{display:none;padding:12px}
+.page.active{display:block}
+
+/* 首页岗位卡片 */
+.home-hero{text-align:center;padding:22px 10px 16px;color:#4b5563}
+.home-hero h2{margin:0 0 4px;font-size:19px;color:#1f2937}
+.home-hero p{margin:0;font-size:13px;color:#9aa3b2}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 4px}
+.role-card{background:#fff;border-radius:14px;padding:16px 10px;box-shadow:0 1px 3px rgba(16,24,40,.07);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:.15s;border:1px solid transparent;min-height:96px}
+.role-card:active{transform:scale(.97);background:#f7f9fd}
+.role-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff}
+.role-name{font-size:14px;font-weight:600;color:#1f2937;text-align:center}
+.role-desc{font-size:11px;color:#9aa3b2;text-align:center;line-height:1.3}
+.role-card.wide{grid-column:1 / -1;flex-direction:row;justify-content:flex-start;padding:14px 16px;gap:14px;min-height:auto}
+.role-card.wide .role-name{font-size:15px}
+.role-card.wide .role-desc{text-align:left}
+.role-textwrap{display:flex;flex-direction:column;gap:2px;flex:1}
+.role-arrow{color:#c0c8d6;font-size:18px;font-weight:400}
+
+.c1{background:linear-gradient(135deg,#1a56db,#3b82f6)}
+.c2{background:linear-gradient(135deg,#059669,#10b981)}
+.c3{background:linear-gradient(135deg,#d97706,#f59e0b)}
+.c4{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
+.c5{background:linear-gradient(135deg,#334155,#64748b)}
+.c6{background:linear-gradient(135deg,#dc2626,#ef4444)}
+
+/* 表单卡片 */
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+.card h2{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px;color:#1f2937}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:#1a56db;flex:none}
+.seg{display:flex;gap:8px;margin-bottom:10px}
+.chip{flex:1;position:relative}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip span{display:block;text-align:center;border:1px solid #d7dce6;border-radius:9px;padding:8px 2px;font-size:13px;background:#fafbfd;color:#4b5563;transition:.15s}
+.chip input:checked+span{background:#1a56db;border-color:#1a56db;color:#fff;font-weight:600}
+.group{margin-bottom:10px}
+.group-title{font-size:13px;font-weight:600;color:#1a56db;padding:6px 0 4px;border-bottom:1px solid #eef1f6;margin-bottom:6px}
+.group-title.mt{margin-top:14px}
+.squad{padding:7px 0;border-bottom:1px dashed #f0f2f6}
+.squad-head{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
+.sname{font-weight:500}
+.sshould{font-size:12px;color:#9aa3b2}
+.squad-body{display:flex;gap:8px;margin-top:6px}
+.num-field{display:flex;align-items:center;gap:5px;font-size:12px;color:#6b7280;flex:none}
+.num-field input{width:58px;padding:6px;border:1px solid #d7dce6;border-radius:8px;font-size:14px;text-align:center;font-family:inherit}
+.note-field{flex:1;min-width:0;padding:6px 10px;border:1px solid #d7dce6;border-radius:8px;font-size:13px;font-family:inherit;background:#fcfdff}
+.auto{font-size:13px;color:#6b7280;flex:none;display:flex;align-items:center}
+.auto b{color:#1a56db;font-size:16px;margin:0 3px}
+.squad.summary{background:#f7f9fd;border-radius:8px;padding:8px;margin-top:6px;border-bottom:none}
+.squad.summary .sname{color:#1a56db}
+.hint{font-size:12px;color:#9aa3b2;margin:0 0 6px}
+
+.btn{width:100%;padding:12px;border:none;border-radius:11px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:.15s}
+.btn-primary{background:#1a56db;color:#fff}
+.btn-primary:active{background:#1544ad}
+.btn-ghost{background:#eef1f6;color:#4b5563}
+.btn-ghost:active{background:#dfe4ec}
+.btn-sm{padding:7px 14px;font-size:13px;width:auto;border-radius:8px}
+.footer{display:flex;gap:10px;padding:0 12px;margin-top:4px;margin-bottom:8px}
+.sticky-actions{position:sticky;bottom:0;background:linear-gradient(to top,#eef1f6 60%,rgba(238,241,246,0));padding:10px 12px 4px;z-index:5}
+
+/* 多条目 */
+.entries{display:flex;flex-direction:column;gap:6px}
+.entry-row{display:flex;gap:6px;align-items:center;background:#f7f9fd;padding:6px;border-radius:8px}
+.entry-row input,.entry-row select{padding:6px 8px;border:1px solid #d7dce6;border-radius:7px;font-size:13px;font-family:inherit;background:#fff;min-width:0;color:#1f2937}
+.entry-row input:focus,.entry-row select:focus{outline:none;border-color:#1a56db}
+.e-dorm,.e-room{width:74px;flex:none}
+.e-bed{width:76px;flex:none}
+.e-issue{flex:1}
+.e-squad{flex:1}
+.e-db{width:72px;flex:none;text-align:center}
+.e-del{background:#fee2e2;color:#b91c1c;border:none;width:26px;height:26px;border-radius:7px;font-size:16px;line-height:1;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;font-family:inherit;padding:0}
+.e-del:active{background:#fecaca}
+.add-btn{background:#eef1f6;color:#1a56db;border:1px dashed #b9c6e0;border-radius:8px;padding:8px;width:100%;font-size:13px;font-family:inherit;cursor:pointer;font-weight:500;margin-top:6px}
+.add-btn:active{background:#e2e8f5}
+
+/* 集合岗中队切换 / 备注换行 / 内务只读 */
+.team-block{display:block}
+textarea.note-field{flex:1;min-width:0;padding:6px 10px;border:1px solid #d7dce6;border-radius:8px;font-size:13px;font-family:inherit;background:#fcfdff;resize:none;overflow:hidden;line-height:1.45;min-height:33px;display:block;color:#1f2937}
+.squad-body{align-items:flex-start}
+.dorm-block.is-readonly input:disabled,.dorm-block.is-readonly select:disabled{color:#1f2937;-webkit-text-fill-color:#1f2937;background:#f1f4f9;opacity:1}
+.dorm-block.is-readonly .e-del,.dorm-block.is-readonly .add-btn{display:none}
+
+/* 弹层 */
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:flex-end;z-index:50}
+.modal.show{display:flex}
+.sheet{background:#fff;width:100%;border-radius:18px 18px 0 0;padding:16px;max-height:88vh;display:flex;flex-direction:column}
+.sheet h3{margin:0 0 10px;font-size:15px}
+.sheet textarea{flex:1;min-height:260px;font-size:13px;line-height:1.6;padding:10px;border:1px solid #d7dce6;border-radius:9px;font-family:inherit;resize:none;background:#fcfdff}
+.sheet .acts{display:flex;gap:10px;margin-top:12px}
+.toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(17,24,39,.9);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;z-index:99;opacity:0;pointer-events:none;transition:.2s}
+.toast.show{opacity:1}
+
+/* 汇总页 */
+.sum-card{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+.sum-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sum-head h3{margin:0;font-size:14px;color:#1a56db;display:flex;align-items:center;gap:7px}
+.sum-head h3 .dot{width:7px;height:7px;border-radius:50%;background:#1a56db}
+.sum-body{font-size:13px;line-height:1.65;color:#374151;white-space:pre-wrap;word-break:break-word;background:#f9fafc;border-radius:9px;padding:10px;font-family:-apple-system,"PingFang SC",monospace;max-height:340px;overflow:auto}
+.sum-empty{font-size:13px;color:#9aa3b2;padding:6px 0}
+
+/* ============ 移动端优化（<=560px） ============ */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media (max-width:560px){
+  body{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+  header{padding-top:calc(12px + env(safe-area-inset-top,0px))}
+  /* iOS 聚焦输入框时整页放大：输入类字号必须 >=16px */
+  .entry-row input,.entry-row select,.num-field input,.datebar input[type=date],
+  textarea.note-field,.sheet textarea{font-size:16px}
+  /* 窄屏每条记录分两行：宿舍/教室号+铺位+删除 一行，问题描述整行 */
+  .entry-row{flex-wrap:wrap;row-gap:6px}
+  .e-issue{flex:1 1 100%;order:2}   /* 问题描述独占一行，删除按钮留在上一行末尾 */
+  .e-del{width:34px;height:34px;border-radius:9px;font-size:18px}
+  .e-dorm,.e-room{width:82px}
+  .e-bed{width:84px}
+  .e-db{width:78px}
+  .num-field input{width:66px}
+  .btn{padding:14px;font-size:16px}
+  .back-btn{width:38px;height:38px;font-size:19px}
+  .chip span{padding:11px 2px;font-size:14px}
+  .add-btn{padding:11px;font-size:14px}
+  .sticky-actions{padding:10px 12px calc(8px + env(safe-area-inset-bottom,0px))}
+  .sheet{max-height:92vh;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  button,input,select,textarea,.chip span,.role-card{touch-action:manipulation}
+}
+
+/* ============ 共享同步 ============ */
+.sync-card{background:#fff;border-radius:14px;padding:12px 14px;margin:0 4px 12px;box-shadow:0 1px 3px rgba(16,24,40,.07);display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid transparent}
+.sync-card:active{background:#f7f9fd}
+.sync-dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;flex:none}
+.sync-dot.on{background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+.sync-dot.busy{background:#f59e0b}
+.sync-dot.err{background:#ef4444}
+.sync-main{flex:1;min-width:0}
+.sync-title{font-size:14px;font-weight:600;color:#1f2937}
+.sync-sub{font-size:12px;color:#9aa3b2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sync-arrow{color:#c0c8d6;font-size:18px;flex:none}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.mode-card{border:1px solid #d7dce6;border-radius:10px;padding:10px;background:#fafbfd;cursor:pointer}
+.mode-card.sel{border-color:#1a56db;background:#eef4ff;box-shadow:0 0 0 1px #1a56db inset}
+.mode-card .t{font-size:13px;font-weight:600;color:#1f2937}
+.mode-card .d{font-size:11px;color:#9aa3b2;margin-top:3px;line-height:1.35}
+.set-field{margin-bottom:12px}
+.set-field>label{display:block;font-size:13px;font-weight:600;color:#4b5563;margin-bottom:6px}
+.set-field input,.set-field select{width:100%;padding:10px;border:1px solid #d7dce6;border-radius:9px;font-size:15px;font-family:inherit;background:#fcfdff;color:#1f2937}
+.set-field .row{display:flex;gap:8px}
+.set-field .row input{flex:1;min-width:0}
+.set-field .row button{flex:none;padding:10px 14px;border-radius:9px;border:none;background:#eef1f6;color:#1a56db;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
+.set-hint{font-size:12px;color:#9aa3b2;line-height:1.55;margin:8px 0 0}
+.status-box{background:#f9fafc;border-radius:9px;padding:10px;font-size:12px;color:#4b5563;line-height:1.8;word-break:break-all}
+.peer-tag{display:inline-block;background:#eef4ff;color:#1a56db;border-radius:6px;padding:1px 7px;font-size:12px;margin:2px 4px 2px 0}
+.acts-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media (max-width:560px){ .set-field input,.set-field select{font-size:16px} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <button class="back-btn" id="backBtn" onclick="goHome()">←</button>
+    <h1 id="pageTitle">法学院每日报班填写系统</h1>
+  </div>
+  <div class="datebar" id="dateBar">
+    <label>日期</label>
+    <input type="date" id="dateInput">
+  </div>
+</header>
+
+<datalist id="squadList">
+  <option value="23警法一区"></option>
+  <option value="23警法二区"></option>
+  <option value="23法学一区"></option>
+  <option value="23法学二区"></option>
+  <option value="24法学一区"></option>
+  <option value="24法学二区"></option>
+  <option value="25警法一区"></option>
+  <option value="25警法二区"></option>
+  <option value="25警法三区"></option>
+  <option value="25实验班"></option>
+  <option value="25法学一区"></option>
+</datalist>
+
+<!-- ============ 首页：岗位选择 ============ -->
+<div class="page active" id="page-home">
+  <div class="home-hero">
+    <h2>请选择你的岗位</h2>
+    <p>填写完成后点击生成，再复制到大群</p>
+  </div>
+  <div class="sync-card" id="syncCard" onclick="goPage('share','共享设置')">
+    <div class="sync-dot" id="syncDot"></div>
+    <div class="sync-main">
+      <div class="sync-title" id="syncTitle">共享未开启</div>
+      <div class="sync-sub" id="syncSub">点击设置：多人一起填同一张表</div>
+    </div>
+    <div class="sync-arrow">›</div>
+  </div>
+  <div class="role-grid">
+    <div class="role-card" onclick="goPage('gather','集合岗')">
+      <div class="role-icon c1">集</div>
+      <div class="role-name">集合岗</div>
+      <div class="role-desc">早操 / 课前</div>
+    </div>
+    <div class="role-card" onclick="goPage('dorm','内务岗')">
+      <div class="role-icon c2">内</div>
+      <div class="role-name">内务岗</div>
+      <div class="role-desc">30 / 31号楼</div>
+    </div>
+    <div class="role-card" onclick="goPage('queue','队列检查岗')">
+      <div class="role-icon c3">队</div>
+      <div class="role-name">队列检查岗</div>
+      <div class="role-desc">分贝检查</div>
+    </div>
+    <div class="role-card" onclick="goPage('teach','责教岗')">
+      <div class="role-icon c4">责</div>
+      <div class="role-name">责教岗</div>
+      <div class="role-desc">晚检查</div>
+    </div>
+    <div class="role-card wide" onclick="goPage('night','晚寝岗')">
+      <div class="role-icon c5">寝</div>
+      <div class="role-textwrap">
+        <div class="role-name">晚寝岗</div>
+        <div class="role-desc">固定内容，无违纪情况</div>
+      </div>
+      <div class="role-arrow">›</div>
+    </div>
+    <div class="role-card wide" onclick="goPage('summary','汇总')">
+      <div class="role-icon c6">总</div>
+      <div class="role-textwrap">
+        <div class="role-name">汇总</div>
+        <div class="role-desc">查看全部岗位已填内容</div>
+      </div>
+      <div class="role-arrow">›</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 集合岗 ============ -->
+<div class="page" id="page-gather">
+  <div class="card">
+    <div class="seg">
+      <label class="chip"><input type="radio" name="gTeam" value="23中队" checked><span>23中队</span></label>
+      <label class="chip"><input type="radio" name="gTeam" value="24中队"><span>24中队</span></label>
+      <label class="chip"><input type="radio" name="gTeam" value="25中队"><span>25中队</span></label>
+      <label class="chip"><input type="radio" name="gTeam" value="全部"><span>全部</span></label>
+    </div>
+    <div class="seg">
+      <label class="chip"><input type="radio" name="gPeriod" value="早操" checked><span>早操</span></label>
+      <label class="chip"><input type="radio" name="gPeriod" value="上午课前"><span>上午课前</span></label>
+      <label class="chip"><input type="radio" name="gPeriod" value="下午课前"><span>下午课前</span></label>
+    </div>
+    <div id="gatherBody"></div>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-primary" onclick="gen('gather')">生成集合岗消息</button>
+  </div>
+</div>
+
+<!-- ============ 内务岗 ============ -->
+<div class="page" id="page-dorm">
+  <div class="card">
+    <div class="seg">
+      <label class="chip"><input type="radio" name="dGender" value="男生" checked><span>男生</span></label>
+      <label class="chip"><input type="radio" name="dGender" value="女生"><span>女生</span></label>
+      <label class="chip"><input type="radio" name="dGender" value="全部"><span>全部</span></label>
+    </div>
+    <div class="seg">
+      <label class="chip"><input type="radio" name="dPeriod" value="上午" checked><span>上午</span></label>
+      <label class="chip"><input type="radio" name="dPeriod" value="下午"><span>下午</span></label>
+    </div>
+
+    <p class="hint" id="dormAllHint" style="display:none">「全部」为只读查看男生、女生的已填内容；需要修改请切回 男生 / 女生。</p>
+    <div id="dormSections"></div>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-primary" onclick="gen('dorm')">生成内务岗消息</button>
+  </div>
+</div>
+
+<!-- ============ 队列检查岗 ============ -->
+<div class="page" id="page-queue">
+  <div class="card">
+    <div class="seg">
+      <label class="chip"><input type="radio" name="qPeriod" value="上午" checked><span>上午</span></label>
+      <label class="chip"><input type="radio" name="qPeriod" value="下午"><span>下午</span></label>
+    </div>
+    <p class="hint">无分贝异常则不填；每条格式：区队 + 分贝</p>
+    <div class="entries" data-entries="queue"></div>
+    <button class="add-btn" data-prefix="queue" type="button">+ 添加一条</button>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-primary" onclick="gen('queue')">生成队列检查岗消息</button>
+  </div>
+</div>
+
+<!-- ============ 责教岗 ============ -->
+<div class="page" id="page-teach">
+  <div class="card">
+    <p class="hint">无问题则不填；每条格式：教室号 + 问题</p>
+    <div class="entries" data-entries="teach"></div>
+    <button class="add-btn" data-prefix="teach" type="button">+ 添加一条</button>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-primary" onclick="gen('teach')">生成责教岗消息</button>
+  </div>
+</div>
+
+<!-- ============ 晚寝岗 ============ -->
+<div class="page" id="page-night">
+  <div class="card">
+    <h2><span class="dot"></span>晚寝岗</h2>
+    <p class="hint">固定内容，无需填写。点击下方生成即可复制。</p>
+    <div style="background:#f9fafc;border-radius:9px;padding:10px;font-size:13px;color:#4b5563;line-height:1.6" id="nightPreview"></div>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-primary" onclick="gen('night')">生成晚寝岗消息</button>
+  </div>
+</div>
+
+
+<!-- ============ 共享设置 ============ -->
+<div class="page" id="page-share">
+  <div class="card">
+    <h2><span class="dot"></span>共享方式</h2>
+    <div class="mode-grid" id="modeGrid">
+      <div class="mode-card" data-mode="local" onclick="pickMode('local')"><div class="t">仅本机</div><div class="d">不共享，内容只存在这台设备</div></div>
+      <div class="mode-card" data-mode="mqtt" onclick="pickMode('mqtt')"><div class="t">房间码（推荐）</div><div class="d">免注册，填同一个房间码即可实时同步</div></div>
+      <div class="mode-card" data-mode="gist" onclick="pickMode('gist')"><div class="t">云端文件</div><div class="d">GitHub / Gitee，需要令牌，长期保存</div></div>
+      <div class="mode-card" data-mode="http" onclick="pickMode('http')"><div class="t">自建地址</div><div class="d">自己的服务器或局域网接口</div></div>
+    </div>
+    <div class="set-field">
+      <label>我的名字（其他人会看到）</label>
+      <input id="setName" maxlength="8" placeholder="例如：张三">
+    </div>
+    <div class="set-field" id="fRoom">
+      <label>房间码（所有人必须一样）</label>
+      <div class="row">
+        <input id="setRoom" maxlength="12" placeholder="例如：LAW2026">
+        <button type="button" onclick="genRoom()">随机</button>
+      </div>
+      <p class="set-hint">房间码就是钥匙，6 位以上字母数字。把这串码（或「复制分享链接」得到的网址）发给同学，大家打开后就是同一张表。</p>
+    </div>
+    <div class="set-field" id="fBroker">
+      <label>同步服务器</label>
+      <select id="setBroker">
+        <option value="emqx">broker.emqx.io（默认，国内较快）</option>
+        <option value="hivemq">broker.hivemq.com</option>
+        <option value="mosquitto">test.mosquitto.org</option>
+      </select>
+      <p class="set-hint">都是公开的免费服务器，免注册。换一个能连上就行。</p>
+    </div>
+    <div class="set-field" id="fGist" style="display:none">
+      <label>访问令牌（需要 gist 权限）</label>
+      <input id="setToken" placeholder="GitHub: ghp_... / Gitee: access_token" autocomplete="off">
+      <label style="margin-top:10px">Gist 编号（留空则自动新建一个）</label>
+      <input id="setGist" placeholder="例如 a1b2c3d4e5f6...">
+      <label style="margin-top:10px">平台</label>
+      <select id="setGistHost"><option value="github">GitHub</option><option value="gitee">Gitee 码云</option></select>
+      <p class="set-hint">令牌只保存在这台设备的浏览器里，不会同步给别人。GitHub 在 Settings → Developer settings → Personal access tokens 里创建，勾选 gist 权限即可。</p>
+    </div>
+    <div class="set-field" id="fHttp" style="display:none">
+      <label>数据地址（GET 取回 / PUT 保存 JSON）</label>
+      <input id="setHttp" placeholder="http://192.168.1.5:8099/api/doc">
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="dot"></span>状态</h2>
+    <div class="status-box" id="statusBox">未连接</div>
+    <div class="acts-wrap">
+      <button class="btn btn-primary btn-sm" onclick="saveSyncCfgFromUI(true)">保存并连接</button>
+      <button class="btn btn-ghost btn-sm" onclick="syncNow()">立即同步</button>
+      <button class="btn btn-ghost btn-sm" onclick="forcePush()">用我的覆盖云端</button>
+      <button class="btn btn-ghost btn-sm" onclick="copyShareLink()">复制分享链接/房间码</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetShared()">清空并同步给所有人</button>
+      <button class="btn btn-ghost btn-sm" onclick="disconnectSync()">断开共享</button>
+    </div>
+    <p class="set-hint">开启后：任何一处改动都会自动同步到同一房间的所有设备；断网时先存在本机，联网后自动补齐。数据是明文的，房间码等于钥匙，请不要发到不相关的地方。</p>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-ghost" onclick="goHome()">返回首页</button>
+  </div>
+</div>
+
+<!-- ============ 汇总 ============ -->
+<div class="page" id="page-summary">
+  <div id="summaryContent"></div>
+  <div class="sticky-actions">
+    <button class="btn btn-primary" onclick="genAll()">生成全部岗位消息</button>
+  </div>
+</div>
+
+<div class="footer">
+  <button class="btn btn-ghost" onclick="clearAll()">清空全部填写内容</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="sheet">
+    <h3 id="modalTitle">生成结果</h3>
+    <textarea id="modalText" readonly></textarea>
+    <div class="acts">
+      <button class="btn btn-ghost" onclick="closeModal()">关闭</button>
+      <button class="btn btn-primary" onclick="copyText()">复制</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ 配置 ============ */
+const GATHER_GROUPS = [
+  { title:'23中队', total:155, unit:'', squads:[
+    {key:'23jf1', name:'23警法一区', should:38},
+    {key:'23jf2', name:'23警法二区', should:37},
+    {key:'23fx1', name:'23法学一区', should:40},
+    {key:'23fx2', name:'23法学二区', should:40}
+  ]},
+  { title:'24中队', total:79, unit:'人', squads:[
+    {key:'24fx1', name:'24法学一区', should:39},
+    {key:'24fx2', name:'24法学二区', should:40}
+  ]},
+  { title:'25中队', total:137, unit:'人', squads:[
+    {key:'25jf1', name:'25警法一区', should:28},
+    {key:'25jf2', name:'25警法二区', should:26},
+    {key:'25jf3', name:'25警法三区', should:28},
+    {key:'25sy',  name:'25实验班',   should:16},
+    {key:'25fx1', name:'25法学一区', should:39}
+  ]}
+];
+
+const DORM_SECTIONS = [
+  {prefix:'c30m', building:'30', gender:'男生'},
+  {prefix:'c30f', building:'30', gender:'女生'},
+  {prefix:'c31m', building:'31', gender:'男生'},
+  {prefix:'c31f', building:'31', gender:'女生'}
+];
+const DORM_FIELDS = [
+  {key:'dorm', cls:'e-dorm', placeholder:'宿舍号', inputmode:'numeric'},
+  {key:'bed', cls:'e-bed', type:'select', placeholder:'铺位', options:['1','2','3','4','5','6'], suffix:'号铺'},
+  {key:'issue', cls:'e-issue', placeholder:'问题'}
+];
+const ENTRY_CONFIGS = {};
+DORM_SECTIONS.forEach(s=>{
+  ENTRY_CONFIGS[s.prefix] = { fields: DORM_FIELDS, build: e => `${e.dorm} ${e.bed}号铺 ${e.issue}` };
+});
+Object.assign(ENTRY_CONFIGS, {
+  queue: {
+    fields:[
+      {key:'squad', cls:'e-squad', placeholder:'区队名', list:'squadList'},
+      {key:'db', cls:'e-db', type:'number', placeholder:'分贝', inputmode:'numeric'}
+    ],
+    build: e => `${e.squad} ${e.db}分贝`
+  },
+  teach: {
+    fields:[
+      {key:'room', cls:'e-room', placeholder:'教室号', inputmode:'numeric'},
+      {key:'issue', cls:'e-issue', placeholder:'问题'}
+    ],
+    build: e => `${e.room} ${e.issue}`
+  }
+});
+
+const STORE_KEY = 'fatc_daily_form_v4';
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+/* ============ 页面切换 ============ */
+function goPage(id, title){
+  $$('.page').forEach(p => p.classList.remove('active'));
+  const page = $('#page-' + id);
+  if(page) page.classList.add('active');
+  if(id === 'home'){
+    $('#backBtn').style.display = 'none';
+    $('#dateBar').style.display = 'none';
+    $('#pageTitle').textContent = '法学院每日报班填写系统';
+  } else {
+    $('#backBtn').style.display = 'flex';
+    $('#dateBar').style.display = 'flex';
+    $('#pageTitle').textContent = title;
+  }
+  if(id === 'night') $('#nightPreview').textContent = buildNight();
+  if(id === 'summary') renderSummary();
+  if(id === 'gather') applyTeamFilter();
+  if(id === 'dorm') applyDormGender();
+  if(id === 'share') renderSharePage();
+  window.scrollTo(0, 0);
+}
+function goHome(){ goPage('home'); }
+
+/* ============ 工具 ============ */
+function val(name){
+  const el = document.querySelector(`[name="${name}"]`);
+  return el ? el.value : '';
+}
+function getRadio(name, fallback){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : fallback;
+}
+function getDateStr(){
+  const v = $('#dateInput').value;
+  if(!v) return '__月__日';
+  const p = v.split('-');
+  return `${parseInt(p[1],10)}月${parseInt(p[2],10)}日`;
+}
+function todayStr(){
+  const d = new Date();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============ 集合岗渲染 ============ */
+function renderGather(){
+  let html = '';
+  GATHER_GROUPS.forEach((g, gi)=>{
+    html += `<div class="team-block" data-team="${g.title}"><div class="group"><div class="group-title">${g.title}</div>`;
+    g.squads.forEach(s=>{
+      html += `
+      <div class="squad">
+        <div class="squad-head">
+          <span class="sname">${s.name}</span>
+          <span class="sshould">应到 ${s.should} 人</span>
+        </div>
+        <div class="squad-body">
+          <label class="num-field">实到<input type="number" min="0" max="${s.should}" inputmode="numeric" name="a_${s.key}" placeholder="__"></label>
+          <textarea class="note-field" rows="1" name="n_${s.key}" placeholder="具体情况（无则留空，可换行）"></textarea>
+        </div>
+      </div>`;
+    });
+    html += `
+      <div class="squad summary">
+        <div class="squad-head">
+          <span class="sname">汇总</span>
+          <span class="sshould">应到 ${g.total}${g.unit}</span>
+        </div>
+        <div class="squad-body">
+          <span class="auto">实到<b data-sumout="${gi}">__</b>人</span>
+          <textarea class="note-field" rows="1" name="n_${g.title}sum" placeholder="具体情况（无则留空，可换行）"></textarea>
+        </div>
+      </div>`;
+    html += `</div></div>`;
+  });
+  $('#gatherBody').innerHTML = html;
+}
+function sumOfGroup(g){
+  const vals = g.squads.map(s => (val(`a_${s.key}`) || '').trim());
+  if(vals.every(v => v === '')) return '__';
+  return vals.reduce((acc,v)=> acc + (v === '' ? 0 : (Number(v) || 0)), 0);
+}
+function updateSums(){
+  GATHER_GROUPS.forEach((g, gi)=>{
+    const out = document.querySelector(`b[data-sumout="${gi}"]`);
+    if(out) out.textContent = sumOfGroup(g);
+  });
+}
+
+/* ---- 集合岗：中队筛选 ---- */
+function selectedTeams(){
+  const t = getRadio('gTeam','23中队');
+  return t === '全部' ? GATHER_GROUPS : GATHER_GROUPS.filter(g => g.title === t);
+}
+function applyTeamFilter(){
+  const t = getRadio('gTeam','23中队');
+  $$('.team-block').forEach(w=>{
+    w.style.display = (t === '全部' || w.dataset.team === t) ? '' : 'none';
+  });
+  $$('textarea.note-field').forEach(ta=>{
+    if(ta.offsetParent !== null) autoGrow(ta);
+  });
+}
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+/* ---- 内务岗：性别筛选 ---- */
+function renderDorm(){
+  let html = '';
+  DORM_SECTIONS.forEach(s=>{
+    html += `
+    <div class="dorm-block" data-prefix="${s.prefix}" data-gender="${s.gender}" data-building="${s.building}">
+      <div class="group-title mt">${s.building}号楼 ${s.gender} 内务</div>
+      <p class="hint">无问题则不填；每条格式：宿舍号 + 铺位 + 问题</p>
+      <div class="entries" data-entries="${s.prefix}"></div>
+      <button class="add-btn" data-prefix="${s.prefix}" type="button">+ 添加一条</button>
+    </div>`;
+  });
+  $('#dormSections').innerHTML = html;
+}
+function applyDormGender(){
+  const mode = getRadio('dGender','男生');
+  const all = mode === '全部';
+  $$('.dorm-block').forEach(w=>{
+    const on = all || w.dataset.gender === mode;
+    w.style.display = on ? '' : 'none';
+    w.classList.toggle('is-readonly', all);
+    w.querySelectorAll('input,select').forEach(el=>{ el.disabled = all; });
+    w.querySelectorAll('button').forEach(el=>{ el.disabled = all; });
+  });
+  $('#dormAllHint').style.display = all ? '' : 'none';
+}
+/* ============ 多条目 ============ */
+function renderEntryRow(prefix){
+  const cfg = ENTRY_CONFIGS[prefix];
+  const row = document.createElement('div');
+  row.className = 'entry-row';
+  cfg.fields.forEach(f=>{
+    let el;
+    if(f.type === 'select'){
+      el = document.createElement('select');
+      el.className = f.cls;
+      el.dataset.k = f.key;
+      const opt0 = document.createElement('option');
+      opt0.value = '';
+      opt0.textContent = f.placeholder || '请选择';
+      el.appendChild(opt0);
+      f.options.forEach(o=>{
+        const o2 = document.createElement('option');
+        o2.value = o;
+        o2.textContent = o + (f.suffix || '');
+        el.appendChild(o2);
+      });
+    } else {
+      el = document.createElement('input');
+      el.className = f.cls;
+      el.dataset.k = f.key;
+      el.type = f.type || 'text';
+      el.placeholder = f.placeholder || '';
+      if(f.inputmode) el.inputMode = f.inputmode;
+      if(f.list) el.setAttribute('list', f.list);
+      if(f.type === 'number'){ el.min = '0'; el.max = '120'; }
+    }
+    row.appendChild(el);
+  });
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'e-del';
+  del.textContent = '×';
+  row.appendChild(del);
+  return row;
+}
+function readEntries(prefix){
+  const rows = document.querySelectorAll('[data-entries="' + prefix + '"] .entry-row');
+  const cfg = ENTRY_CONFIGS[prefix];
+  const result = [];
+  rows.forEach(row=>{
+    const obj = {};
+    cfg.fields.forEach(f=>{
+      const el = row.querySelector('[data-k="' + f.key + '"]');
+      obj[f.key] = el ? el.value.trim() : '';
+    });
+    result.push(obj);
+  });
+  return result;
+}
+let skippedRows = 0;
+function getEntries(prefix){
+  const cfg = ENTRY_CONFIGS[prefix];
+  const all = readEntries(prefix);
+  const result = [];
+  all.forEach(obj=>{
+    const filled = cfg.fields.filter(f => obj[f.key] !== '').length;
+    if(filled === cfg.fields.length){
+      result.push(obj);
+    } else if(filled > 0){
+      skippedRows++;   // 只填了一半：保留录入内容，生成时提醒
+    }
+  });
+  return result;
+}
+
+/* ============ 生成 ============ */
+function buildGather(teams){
+  const date = getDateStr();
+  const period = getRadio('gPeriod','早操');
+  const list = teams || GATHER_GROUPS;
+  let out = `报告队长，法学院${date}${period}集合检查情况如下：`;
+  list.forEach(g=>{
+    out += `\n${g.title}`;
+    g.squads.forEach(s=>{
+      const a = (val(`a_${s.key}`) || '').trim() || '__';
+      const n = (val(`n_${s.key}`) || '').trim();
+      out += `\n${s.name}\n应到${s.should}人\n实到${a}人`;
+      if(n) out += `\n${n}`;
+    });
+    const sn = (val(`n_${g.title}sum`) || '').trim();
+    const filledN = g.squads.filter(s => (val(`a_${s.key}`) || '').trim() !== '').length;
+    const partial = (filledN > 0 && filledN < g.squads.length) ? '（部分区队未填）' : '';
+    out += `\n汇总\n应到${g.total}${g.unit}\n实到${sumOfGroup(g)}人${partial}`;
+    if(sn) out += `\n${sn}`;
+    out += `\n`;
+  });
+  out += `\n报告完毕`;
+  return out;
+}
+function buildDorm(scope){
+  const date = getDateStr();
+  const period = getRadio('dPeriod','上午');
+  const list = (!scope || scope === '全部') ? DORM_SECTIONS : DORM_SECTIONS.filter(s => s.gender === scope);
+  let out = `报告队长，法学院${date}${period}内务检查情况如下：`;
+  list.forEach(s=>{
+    const entries = getEntries(s.prefix).map(e => ENTRY_CONFIGS[s.prefix].build(e));
+    out += `\n${s.building}号楼 ${s.gender}`;
+    out += entries.length ? `\n${entries.join('\n')}\n其余内务情况良好` : `\n内务情况良好`;
+    out += `\n公卫情况良好`;
+  });
+  out += `\n报告完毕`;
+  return out;
+}
+function buildQueue(){
+  const date = getDateStr();
+  const period = getRadio('qPeriod','上午');
+  let out = `报告队长，法学院${date}${period}队列检查情况如下：`;
+  const entries = getEntries('queue').map(e => ENTRY_CONFIGS.queue.build(e));
+  out += entries.length ? `\n${entries.join('\n')}\n其余队列情况良好，警容风纪良好` : `\n队列情况良好，警容风纪良好`;
+  out += `\n报告完毕`;
+  return out;
+}
+function buildTeach(){
+  const date = getDateStr();
+  const entries = getEntries('teach').map(e => ENTRY_CONFIGS.teach.build(e));
+  let out = `报告队长，法学院${date}晚责教检查情况如下：`;
+  out += entries.length ? `\n${entries.join('\n')}\n其余教室情况良好` : `\n各教室情况良好`;
+  out += `\n报告完毕`;
+  return out;
+}
+function buildNight(){
+  return `报告队长，法学院${getDateStr()}晚寝检查完毕，各中队晚寝检查秩序良好，无违纪情况。`;
+}
+const BUILDERS = {
+  gather:{title:'集合岗',    fn:()=>buildGather(GATHER_GROUPS)},
+  dorm:  {title:'内务岗',    fn:()=>buildDorm('全部')},
+  queue: {title:'队列检查岗',fn:buildQueue},
+  teach: {title:'责教岗',    fn:buildTeach},
+  night: {title:'晚寝岗',    fn:buildNight}
+};
+function gen(type){
+  const b = BUILDERS[type];
+  skippedRows = 0;
+  let text;
+  if(type === 'gather') text = buildGather(selectedTeams());
+  else if(type === 'dorm') text = buildDorm(getRadio('dGender','男生'));
+  else text = b.fn();
+  showResult(b.title, text);
+  if(skippedRows) toast(`有 ${skippedRows} 条记录未填写完整，已跳过`);
+}
+function genAll(){
+  skippedRows = 0;
+  const text = ['gather','dorm','queue','teach','night']
+    .map(t => BUILDERS[t].fn()).join('\n\n');
+  showResult('全部岗位', text);
+  if(skippedRows) toast(`有 ${skippedRows} 条记录未填写完整，已跳过`);
+}
+
+/* ============ 汇总页 ============ */
+function renderSummary(){
+  const container = $('#summaryContent');
+  container.innerHTML = '';
+  ['gather','dorm','queue','teach','night'].forEach(t=>{
+    const b = BUILDERS[t];
+    const text = b.fn();
+    const card = document.createElement('div');
+    card.className = 'sum-card';
+    card.innerHTML = `
+      <div class="sum-head">
+        <h3><span class="dot"></span>${esc(b.title)}</h3>
+        <button class="btn btn-ghost btn-sm" data-copy="${t}">复制</button>
+      </div>
+      <div class="sum-body">${esc(text)}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ============ 弹层 / 复制 ============ */
+function showResult(title, text){
+  $('#modalTitle').textContent = title;
+  $('#modalText').value = text;
+  $('#modal').classList.add('show');
+}
+function closeModal(){ $('#modal').classList.remove('show'); }
+function fallbackCopy(t){
+  const ta = document.createElement('textarea');
+  ta.value = t;
+  ta.setAttribute('readonly','');
+  ta.style.position = 'fixed';
+  ta.style.top = '0';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, ta.value.length);
+  let ok = false;
+  try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
+  document.body.removeChild(ta);
+  return ok;
+}
+async function copyRaw(t){
+  let ok = false;
+  if(navigator.clipboard && window.isSecureContext){
+    try{ await navigator.clipboard.writeText(t); ok = true; }catch(e){ ok = false; }
+  }
+  if(!ok) ok = fallbackCopy(t);
+  toast(ok ? '已复制到剪贴板' : '复制失败，请长按手动复制');
+}
+function copyText(){ copyRaw($('#modalText').value); }
+let toastTimer;
+function toast(msg){
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.remove('show'), 1600);
+}
+
+/* ============ 保存 / 恢复 ============ */
+function saveState(){
+  const data = { date: $('#dateInput').value, radios:{}, gather:{}, entries:{} };
+  ['gPeriod','dPeriod','qPeriod','gTeam','dGender'].forEach(n=>{ data.radios[n] = getRadio(n,''); });
+  $$('input[name^="a_"], input[name^="n_"]').forEach(el=>{ data.gather[el.name] = el.value; });
+  Object.keys(ENTRY_CONFIGS).forEach(prefix=>{ data.entries[prefix] = readEntries(prefix); });
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}
+}
+function restoreState(){
+  let data = {};
+  let rawDraft = null;
+  try{
+    rawDraft = localStorage.getItem(STORE_KEY);
+    if(!rawDraft) rawDraft = localStorage.getItem('fatc_daily_form_v3'); // 兼容旧版（v3）草稿，避免升级后填写内容凭空消失
+    data = JSON.parse(rawDraft || '{}');
+  }catch(e){ data = {}; }
+  if(data.date) $('#dateInput').value = data.date;
+
+  Object.keys(data.radios||{}).forEach(n=>{
+    document.querySelectorAll(`input[name="${n}"]`).forEach(el=>{
+      el.checked = (el.value === data.radios[n]);
+    });
+  });
+  Object.keys(data.gather||{}).forEach(n=>{
+    const el = document.querySelector(`[name="${n}"]`);
+    if(el) el.value = data.gather[n];
+  });
+  Object.keys(ENTRY_CONFIGS).forEach(prefix=>{
+    const container = document.querySelector(`[data-entries="${prefix}"]`);
+    container.innerHTML = '';
+    const arr = (data.entries||{})[prefix];
+    if(arr && arr.length){
+      arr.forEach(e=>{
+        const row = renderEntryRow(prefix);
+        Object.keys(e).forEach(k=>{
+          const el = row.querySelector(`[data-k="${k}"]`);
+          if(el) el.value = e[k];
+        });
+        container.appendChild(row);
+      });
+    } else {
+      container.appendChild(renderEntryRow(prefix));
+    }
+  });
+}
+function clearLocalFields(){
+  const notShare = el => !el.closest('#page-share');
+  $$('input[type="number"]').filter(notShare).forEach(i => i.value = '');
+  $$('input[type="text"]').filter(notShare).forEach(i => i.value = '');
+  $$('select').filter(notShare).forEach(s => s.selectedIndex = 0);
+  $$('textarea').filter(notShare).forEach(t => { t.value = ''; autoGrow(t); });
+  $$('input[type="radio"]').forEach(r => { r.checked = r.defaultChecked; });
+  Object.keys(ENTRY_CONFIGS).forEach(prefix=>{
+    const container = document.querySelector('[data-entries="' + prefix + '"]');
+    container.innerHTML = '';
+    container.appendChild(renderEntryRow(prefix));
+  });
+  updateSums();
+  applyTeamFilter();
+  applyDormGender();
+}
+function clearAll(){
+  if(!confirm('确定清空所有填写内容？\n（共享开启时：只清本机，云端内容会在下次同步时自己回来；要清所有人的请到「共享设置」里点「清空并同步给所有人」）')) return;
+  clearLocalFields();
+  try{
+    localStorage.removeItem(STORE_KEY);
+    localStorage.removeItem('fatc_daily_form_v3'); // 旧版键一起清掉，否则下次打开会把旧草稿又读回来
+  }catch(e){}
+  doc = {fields:{}}; saveDoc(); lastSent = ''; lastView = domView();
+  toast('已清空本机内容');
+}
+
+/* ============ 共享同步层 ============ */
+var SYNC_KEY='fatc_sync_v1', DOC_KEY='fatc_doc_v1', CLIENT_KEY='fatc_client_v1';
+var BROKERS={emqx:'wss://broker.emqx.io:8084/mqtt',hivemq:'wss://broker.hivemq.com:8884/mqtt',mosquitto:'wss://test.mosquitto.org:8081/mqtt'};
+var TOPIC_ROOT='fatc/dailyform';
+var syncCfg=null, doc={fields:{}}, myId='', mqttCli=null, mqttRoom='', curMode='local';
+var pushTimer=null, pollTimer=null, presenceTimer=null, tickTimer=null, reconnectTimer=null, healTimer=null, pendingMode=null;
+var clockFloor=0;
+var peers={}, syncState='off', lastSyncAt=0, lastErr='', lastSent='', lastView=null;
+
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function defaultCfg(){ return {mode:'local',name:'',room:'',broker:'emqx',token:'',gist:'',gistHost:'github',http:''}; }
+function loadSyncCfg(){ var c=null; try{ c=JSON.parse(lsGet(SYNC_KEY)||'null'); }catch(e){} return Object.assign(defaultCfg(), c||{}); }
+function saveSyncCfg(){ lsSet(SYNC_KEY, JSON.stringify(syncCfg)); }
+function loadDoc(){ try{ var d=JSON.parse(lsGet(DOC_KEY)||'null'); if(d&&d.fields) return d; }catch(e){} return {fields:{}}; }
+function saveDoc(){ lsSet(DOC_KEY, JSON.stringify(doc)); }
+function getClientId(){ var id=lsGet(CLIENT_KEY); if(!id){ id='d'+Math.random().toString(36).slice(2,8); lsSet(CLIENT_KEY,id); } return id; }
+function myLabel(){ var n=(syncCfg.name||'').trim(); return n || ('设备'+myId.slice(1,4)); }
+function isIdx(s){ return s!=='' && String(parseInt(s,10))===s; }
+function shortErr(e){ var m=(e&&(e.message||e.toString()))||'未知错误'; return m.length>40 ? m.slice(0,40)+'…' : m; }
+function setState(s){ if(syncState!==s){ syncState=s; renderSyncCard(); } }
+function setErr(m){ lastErr=m||''; }
+
+/* --- 本机视图 -> 文档（每个字段带时间戳，按字段“后改的赢”） --- */
+function domView(){
+  var v={};
+  v['date']=$('#dateInput').value;
+  ['gPeriod','dPeriod','qPeriod','gTeam','dGender'].forEach(function(n){ v['r.'+n]=getRadio(n,''); });
+  $$('input[name^="a_"], input[name^="n_"]').forEach(function(el){ v['g.'+el.name]=el.value; });
+  Object.keys(ENTRY_CONFIGS).forEach(function(prefix){
+    var rows=readEntries(prefix);
+    v['e.'+prefix+'.__n']=rows.length;
+    rows.forEach(function(o,i){ Object.keys(o).forEach(function(k){ v['e.'+prefix+'.'+i+'.'+k]=o[k]; }); });
+  });
+  return v;
+}
+function docPrefixMax(prefix){
+  var pre='e.'+prefix+'.', mx=-1;
+  Object.keys(doc.fields).forEach(function(p){
+    if(p.indexOf(pre)!==0) return;
+    var r=p.slice(pre.length).split('.');
+    if(r.length===3 && isIdx(r[0])) mx=Math.max(mx,parseInt(r[0],10));
+  });
+  return mx;
+}
+function onLocalChange(force){
+  var view=domView(), t=Math.max(Date.now(),clockFloor+1), changed=false, base=lastView||{};
+  Object.keys(view).forEach(function(p){
+    if(!force && (p in base) && base[p]===view[p]) return;
+    var cur=doc.fields[p];
+    if(!force && cur && cur.v===view[p]) return;
+    doc.fields[p]={v:view[p],t:t,by:myId}; changed=true;
+  });
+  Object.keys(ENTRY_CONFIGS).forEach(function(prefix){
+    var n=parseInt(view['e.'+prefix+'.__n'],10)||0, mx=docPrefixMax(prefix);
+    for(var i=n;i<=mx;i++){
+      ENTRY_CONFIGS[prefix].fields.forEach(function(f){
+        var p='e.'+prefix+'.'+i+'.'+f.key;
+        if(doc.fields[p] && doc.fields[p].v!==''){ doc.fields[p]={v:'',t:t,by:myId}; changed=true; }
+      });
+    }
+  });
+  lastView=view;
+  if(changed){ saveDoc(); schedulePush(); }
+  return changed;
+}
+
+/* --- 合并与回填 --- */
+function mergeRemote(remote){
+  if(!remote||!remote.fields||typeof remote.fields!=='object') return 0;
+  var changed=0;
+  Object.keys(remote.fields).forEach(function(p){
+    var r=remote.fields[p]; if(!r||typeof r.t!=='number') return;
+    var l=doc.fields[p];
+    if(!l || r.t>l.t || (r.t===l.t && String(r.by||'')>String(l.by||''))){ doc.fields[p]=r; changed++; if(r.t>clockFloor) clockFloor=r.t; }
+  });
+  if(changed) saveDoc();
+  return changed;
+}
+function applyDoc(){
+  var focus=document.activeElement;
+  var df=doc.fields['date']; if(df && focus!==$('#dateInput')) $('#dateInput').value=String(df.v);
+  ['gPeriod','dPeriod','qPeriod','gTeam','dGender'].forEach(function(n){
+    var f=doc.fields['r.'+n]; if(!f) return;
+    $$('input[name="'+n+'"]').forEach(function(el){ if(el.value===String(f.v) && !el.checked && el!==focus) el.checked=true; });
+  });
+  $$('input[name^="a_"], input[name^="n_"]').forEach(function(el){
+    var f=doc.fields['g.'+el.name]; if(!f) return;
+    if(el!==focus && el.value!==String(f.v)) el.value=String(f.v);
+    if(el.tagName==='TEXTAREA') autoGrow(el);
+  });
+  Object.keys(ENTRY_CONFIGS).forEach(function(prefix){ applyEntries(prefix,focus); });
+  updateSums();
+  lastView=domView();
+  saveState();
+}
+function applyEntries(prefix,focus){
+  var container=document.querySelector('[data-entries="'+prefix+'"]'); if(!container) return;
+  var cfg=ENTRY_CONFIGS[prefix], pre='e.'+prefix+'.';
+  var nf=doc.fields[pre+'__n'], mx=docPrefixMax(prefix);
+  var n=nf?(parseInt(nf.v,10)||0):(mx+1);
+  if(n<1) n=1;
+  var focusIn = focus && container.contains(focus);
+  var oldRows=Array.prototype.slice.call(container.querySelectorAll('.entry-row'));
+  var fidx = focusIn ? oldRows.indexOf(focus.closest('.entry-row')) : -1;
+  var fkey = focusIn ? (focus.dataset.k||'') : '';
+  if(oldRows.length!==n){
+    container.innerHTML='';
+    for(var i=0;i<n;i++) container.appendChild(renderEntryRow(prefix));
+  }
+  var rows=Array.prototype.slice.call(container.querySelectorAll('.entry-row'));
+  for(var j=0;j<n;j++){
+    var row=rows[j]; if(!row) break;
+    cfg.fields.forEach(function(f){
+      var el=row.querySelector('[data-k="'+f.key+'"]'); if(!el||el===focus) return;
+      var fl=doc.fields[pre+j+'.'+f.key], v=fl?String(fl.v):'';
+      if(el.value!==v) el.value=v;
+    });
+  }
+  if(focusIn && !container.contains(document.activeElement) && fidx>=0){
+    var r2=rows[fidx], el2=r2?r2.querySelector('[data-k="'+fkey+'"]'):null;
+    if(el2) el2.focus();
+  }
+}
+
+/* --- 传输：MQTT（免注册房间码） --- */
+function createMqtt(o){
+  var ws=null, buffer=new Uint8Array(0), pingTimer=null, closedByUs=false, conn=false;
+  var enc=new TextEncoder(), dec=new TextDecoder();
+  function lenVarint(n){ var out=[]; do{ var b=n%128; n=Math.floor(n/128); if(n>0) b=b|128; out.push(b); }while(n>0); return out; }
+  function str(s){ var b=enc.encode(s); var out=new Uint8Array(b.length+2); out[0]=(b.length>>8)&255; out[1]=b.length&255; out.set(b,2); return out; }
+  function packet(type,flags,parts){
+    var L=0; for(var i=0;i<parts.length;i++) L+=parts[i].length;
+    var head=[((type<<4)|flags)&255].concat(lenVarint(L));
+    var out=new Uint8Array(head.length+L); out.set(head,0);
+    var off=head.length;
+    for(var j=0;j<parts.length;j++){ out.set(parts[j],off); off+=parts[j].length; }
+    return out;
+  }
+  function send(bytes){ if(ws&&ws.readyState===1) ws.send(bytes); }
+  function handle(pkt,hdrLen,bodyLen){
+    var type=pkt[0]>>4, body=pkt.slice(hdrLen,hdrLen+bodyLen);
+    if(type===2){
+      conn=true;
+      pingTimer=setInterval(function(){ send(new Uint8Array([192,0])); }, o.keepalive*1000/2);
+      if(o.onOpen) o.onOpen();
+    } else if(type===3){
+      var tl=(body[0]<<8)|body[1];
+      var topic=dec.decode(body.slice(2,2+tl));
+      var payload=dec.decode(body.slice(2+tl));
+      if(o.onMessage) o.onMessage(topic,payload,(pkt[0]&1)===1);
+    }
+  }
+  function push(chunk){
+    var merged=new Uint8Array(buffer.length+chunk.length); merged.set(buffer,0); merged.set(chunk,buffer.length); buffer=merged;
+    for(;;){
+      if(buffer.length<2) return;
+      var mult=1,value=0,i=1,b=0;
+      do{ if(i>=buffer.length) return; b=buffer[i++]; value+=(b&127)*mult; mult=mult*128; }while(b&128);
+      var total=i+value;
+      if(buffer.length<total) return;
+      handle(buffer.slice(0,total),i,value);
+      buffer=buffer.slice(total);
+    }
+  }
+  return {
+    connect:function(){
+      try{ ws=new WebSocket(o.url,'mqtt'); }catch(e){ if(o.onError) o.onError(e); return; }
+      ws.binaryType='arraybuffer';
+      ws.onopen=function(){
+        var flags=2;
+        if(o.will) flags=flags|4|32;
+        var parts=[str('MQTT'), new Uint8Array([4,flags,(o.keepalive>>8)&255,o.keepalive&255]), str(o.clientId)];
+        if(o.will){ parts.push(str(o.will.topic)); parts.push(str(o.will.payload||'')); }
+        send(packet(1,0,parts));
+      };
+      ws.onmessage=function(ev){ push(new Uint8Array(ev.data)); };
+      ws.onclose=function(){ conn=false; clearInterval(pingTimer); pingTimer=null; if(!closedByUs && o.onClose) o.onClose(); };
+      ws.onerror=function(e){ if(o.onError) o.onError(e); };
+    },
+    subscribe:function(topic){ send(packet(8,2,[new Uint8Array([0,1]),str(topic),new Uint8Array([0])])); },
+    publish:function(topic,payload,retain){ send(packet(3,retain?1:0,[str(topic),enc.encode(payload)])); },
+    close:function(){ closedByUs=true; clearInterval(pingTimer); pingTimer=null; try{ send(new Uint8Array([224,0])); ws.close(); }catch(e){} },
+    connected:function(){ return conn; }
+  };
+}
+function stateTopic(){ return TOPIC_ROOT+'/'+mqttRoom+'/s'; }
+function presenceTopic(){ return TOPIC_ROOT+'/'+mqttRoom+'/p/'+myId; }
+function connectMqtt(){
+  disconnectMqtt(true);
+  mqttRoom=(syncCfg.room||'').trim();
+  if(!mqttRoom){ setErr('请先填房间码'); setState('err'); return; }
+  setErr(''); setState('busy');
+  mqttCli=createMqtt({
+    url:BROKERS[syncCfg.broker]||BROKERS.emqx,
+    clientId:'fatc_'+myId+'_'+Math.random().toString(36).slice(2,6),
+    keepalive:30,
+    will:{topic:presenceTopic(),payload:'',retain:true},
+    onOpen:function(){
+      setState('on'); setErr('');
+      mqttCli.subscribe(TOPIC_ROOT+'/'+mqttRoom+'/#');
+      publishPresence();
+      clearInterval(presenceTimer); presenceTimer=setInterval(publishPresence,12000);
+      clearTimeout(healTimer);
+      healTimer=setTimeout(function(){
+        if(curMode==='mqtt' && mqttCli && mqttCli.connected() && Object.keys(doc.fields).length) pushDoc(true);
+      },2500);
+      renderSyncCard();
+    },
+    onClose:function(){
+      setState('err'); setErr('连接已断开');
+      clearInterval(presenceTimer); presenceTimer=null; peers={};
+      if(curMode==='mqtt'){ clearTimeout(reconnectTimer); reconnectTimer=setTimeout(function(){ if(curMode==='mqtt') connectMqtt(); },5000); }
+    },
+    onError:function(e){ setErr(shortErr(e)); setState('err'); },
+    onMessage:handleMqtt
+  });
+  mqttCli.connect();
+}
+function disconnectMqtt(silent){
+  clearTimeout(reconnectTimer); clearInterval(presenceTimer); presenceTimer=null;
+  if(mqttCli){
+    try{ if(mqttCli.connected()) mqttCli.publish(presenceTopic(),'',true); }catch(e){}
+    try{ mqttCli.close(); }catch(e){}
+    mqttCli=null;
+  }
+  peers={};
+  if(!silent){ setState('off'); setErr(''); }
+}
+function publishPresence(){
+  if(!mqttCli||!mqttCli.connected()) return;
+  mqttCli.publish(presenceTopic(),JSON.stringify({n:myLabel(),t:Date.now()}),true);
+}
+function handleMqtt(topic,payload){
+  var room=TOPIC_ROOT+'/'+mqttRoom+'/', stopic=room+'s';
+  if(topic===stopic){
+    var d=null; try{ d=JSON.parse(payload||'{}'); }catch(e){ return; }
+    var ch=mergeRemote(d);
+    if(ch){ applyDoc(); lastSyncAt=Date.now(); }
+    var newest=0;
+    Object.keys(d.fields||{}).forEach(function(p){ var x=d.fields[p]; if(x&&x.t>newest) newest=x.t; });
+    var mineNewer=false;
+    Object.keys(doc.fields).forEach(function(p){ if(doc.fields[p].t>newest) mineNewer=true; });
+    if(mineNewer) schedulePush();
+    renderSyncCard();
+  } else if(topic.indexOf(room+'p/')===0){
+    var id=topic.slice((room+'p/').length);
+    if(id===myId) return;
+    if(!payload){ delete peers[id]; }
+    else { try{ var j=JSON.parse(payload); j.t=j.t||Date.now(); peers[id]=j; }catch(e){} }
+    renderSyncCard();
+  }
+}
+function prunePeers(){
+  var now=Date.now(), ch=false;
+  Object.keys(peers).forEach(function(k){ if(now-(peers[k].t||0)>45000){ delete peers[k]; ch=true; } });
+  if(ch) renderSyncCard();
+}
+
+/* --- 传输：云端文件（Gist）/ 自建地址 --- */
+function gistBase(){ return syncCfg.gistHost==='gitee' ? 'https://gitee.com/api/v5' : 'https://api.github.com'; }
+function gistUrl(path){
+  var u=gistBase()+path;
+  if(syncCfg.gistHost==='gitee') u += (u.indexOf('?')<0?'?':'&')+'access_token='+encodeURIComponent(syncCfg.token||'');
+  return u;
+}
+function gistHeaders(){
+  var h={'Content-Type':'application/json','Accept':'application/json'};
+  if(syncCfg.gistHost!=='gitee') h['Authorization']='Bearer '+(syncCfg.token||'');
+  return h;
+}
+function gistPull(){
+  if(!syncCfg.gist) return Promise.resolve(null);
+  return fetch(gistUrl('/gists/'+syncCfg.gist),{headers:gistHeaders(),cache:'no-store'})
+    .then(function(r){ if(!r.ok) throw new Error('Gist 读取 '+r.status); return r.json(); })
+    .then(function(j){
+      var f=(j.files||{})['fatc-report.json'];
+      if(!f||!f.content) return null;
+      try{ return JSON.parse(f.content); }catch(e){ return null; }
+    });
+}
+function gistPush(payload){
+  var obj={description:'法学院每日报班共享数据',files:{'fatc-report.json':{content:payload}}};
+  if(!syncCfg.gist){
+    obj.public=false;
+    return fetch(gistUrl('/gists'),{method:'POST',headers:gistHeaders(),body:JSON.stringify(obj)})
+      .then(function(r){ if(!r.ok) throw new Error('Gist 新建失败 '+r.status); return r.json(); })
+      .then(function(j){ if(j && j.id){ syncCfg.gist=j.id; saveSyncCfg(); renderSharePage(); } });
+  }
+  return fetch(gistUrl('/gists/'+syncCfg.gist),{method:'PATCH',headers:gistHeaders(),body:JSON.stringify(obj)})
+    .then(function(r){ if(!r.ok) throw new Error('Gist 保存 '+r.status); });
+}
+function pushRemote(payload){
+  if(curMode==='gist') return gistPush(payload);
+  return fetch(syncCfg.http,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload})
+    .then(function(r){ if(!r.ok) throw new Error('保存失败 HTTP '+r.status); });
+}
+function pullRemote(){
+  if(curMode==='gist') return gistPull();
+  return fetch(syncCfg.http,{cache:'no-store'})
+    .then(function(r){ if(!r.ok) throw new Error('读取失败 HTTP '+r.status); return r.text(); })
+    .then(function(t){ if(!t||!t.trim()) return null; try{ return JSON.parse(t); }catch(e){ return null; } });
+}
+
+/* --- 推送 / 拉取 / 连接管理 --- */
+function statePayload(){ return JSON.stringify({v:1,app:'fatc',room:syncCfg.room,by:myLabel(),fields:doc.fields}); }
+function schedulePush(){
+  if(curMode==='local') return;
+  clearTimeout(pushTimer); pushTimer=setTimeout(function(){ pushDoc(false); },500);
+  renderSyncCard();
+}
+function pushDoc(force){
+  if(curMode==='local') return;
+  var payload=statePayload();
+  if(!force && payload===lastSent) return;
+  if(curMode==='mqtt'){
+    if(!mqttCli||!mqttCli.connected()) return;
+    mqttCli.publish(stateTopic(),payload,true);
+    lastSent=payload; lastSyncAt=Date.now(); setErr(''); setState('on'); renderSyncCard();
+    return;
+  }
+  pushRemote(payload).then(function(){
+    lastSent=payload; lastSyncAt=Date.now(); setErr(''); setState('on'); renderSyncCard();
+  }).catch(function(e){ setErr(shortErr(e)); setState('err'); });
+}
+function startPolling(){ clearInterval(pollTimer); pollTimer=setInterval(function(){ pullOnce(false); },8000); }
+function pullOnce(manual){
+  if(curMode==='local') return Promise.resolve();
+  setState('busy');
+  return pullRemote().then(function(d){
+    var ch=d?mergeRemote(d):0;
+    if(ch){ applyDoc(); lastSyncAt=Date.now(); }
+    setErr(''); setState('on'); renderSyncCard();
+    if(manual) toast(ch?('已合并云端 '+ch+' 项'):'云端暂无新内容');
+  }).catch(function(e){ setErr(shortErr(e)); setState('err'); if(manual) toast('同步失败：'+shortErr(e)); });
+}
+function connectSync(){
+  curMode=syncCfg.mode;
+  clearInterval(pollTimer); pollTimer=null;
+  if(curMode==='local'){ disconnectMqtt(); setState('off'); setErr(''); renderSyncCard(); return Promise.resolve(); }
+  if(curMode==='mqtt'){ connectMqtt(); return Promise.resolve(); }
+  if(curMode==='gist' && !syncCfg.token){ setErr('请先填访问令牌'); setState('err'); renderSyncCard(); return Promise.resolve(); }
+  if(curMode==='http' && !syncCfg.http){ setErr('请先填数据地址'); setState('err'); renderSyncCard(); return Promise.resolve(); }
+  setState('busy');
+  return pullOnce(false).then(function(){ startPolling(); renderSyncCard(); });
+}
+function disconnectSync(){
+  syncCfg.mode='local'; pendingMode=null; saveSyncCfg();
+  curMode='local';
+  clearInterval(pollTimer); pollTimer=null;
+  disconnectMqtt();
+  lastErr=''; lastSent='';
+  setState('off'); renderSyncCard(); renderSharePage();
+  toast('已断开共享');
+}
+
+/* --- 设置页 --- */
+function renderSharePage(){
+  if(!$('#page-share')) return;
+  var m=pendingMode||syncCfg.mode;
+  ['local','mqtt','gist','http'].forEach(function(x){
+    var el=document.querySelector('.mode-card[data-mode="'+x+'"]');
+    if(el) el.classList.toggle('sel', x===m);
+  });
+  var set=function(sel,v){ var el=$(sel); if(el && el.value!==v) el.value=v; };
+  set('#setName',syncCfg.name||''); set('#setRoom',syncCfg.room||'');
+  set('#setBroker',syncCfg.broker||'emqx'); set('#setToken',syncCfg.token||'');
+  set('#setGist',syncCfg.gist||''); set('#setGistHost',syncCfg.gistHost||'github');
+  set('#setHttp',syncCfg.http||'');
+  updateFieldVis();
+  renderStatusBox();
+}
+function updateFieldVis(){
+  var m=pendingMode||syncCfg.mode;
+  var show=function(id,on){ var el=$(id); if(el) el.style.display=on?'':'none'; };
+  show('#fRoom', m==='mqtt'); show('#fBroker', m==='mqtt');
+  show('#fGist', m==='gist'); show('#fHttp', m==='http');
+}
+function pickMode(m){ pendingMode=m; renderSharePage(); }
+function genRoom(){
+  var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s='LAW';
+  for(var i=0;i<5;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  $('#setRoom').value=s;
+}
+function saveSyncCfgFromUI(connect){
+  syncCfg.mode=pendingMode||syncCfg.mode;
+  syncCfg.name=($('#setName').value||'').trim();
+  syncCfg.room=($('#setRoom').value||'').trim().toUpperCase();
+  syncCfg.broker=$('#setBroker').value;
+  syncCfg.token=($('#setToken').value||'').trim();
+  syncCfg.gist=($('#setGist').value||'').trim();
+  syncCfg.gistHost=$('#setGistHost').value;
+  syncCfg.http=($('#setHttp').value||'').trim();
+  saveSyncCfg(); pendingMode=null;
+  renderSharePage();
+  if(connect){ connectSync(); toast('设置已保存'); }
+}
+function syncNow(){
+  if(curMode==='local'){ toast('当前是「仅本机」，请先开启共享'); return; }
+  if(curMode==='mqtt'){ lastSent=''; pushDoc(true); toast('已推送到房间'); return; }
+  pullOnce(true).then(function(){ pushDoc(false); });
+}
+function forcePush(){
+  if(curMode==='local'){ toast('请先开启共享'); return; }
+  if(!confirm('用本机当前内容覆盖云端？同一房间其他人的已填内容会被本机内容替换。')) return;
+  onLocalChange(true);
+  pushDoc(true);
+  toast('已用本机内容覆盖云端');
+}
+function resetShared(){
+  if(curMode==='local'){ toast('当前未开启共享'); return; }
+  if(!confirm('清空云端共享内容，并同步给同一房间的所有设备（一般用于开始新的一天）。确定吗？')) return;
+  clearLocalFields();
+  doc={fields:{}}; lastSent='';
+  var view=domView(), t=Date.now();
+  Object.keys(view).forEach(function(p){ doc.fields[p]={v:view[p],t:t,by:myId}; });
+  saveDoc(); lastView=view;
+  pushDoc(true); renderSyncCard();
+  toast('已清空并同步给所有人');
+}
+function shareLink(){
+  var base=location.href.split('#')[0];
+  return base+'#mode='+encodeURIComponent(syncCfg.mode)+'&room='+encodeURIComponent(syncCfg.room||'');
+}
+function copyShareLink(){
+  var r=(syncCfg.room||'').trim();
+  if(syncCfg.mode==='mqtt' && !r){ toast('请先填房间码'); return; }
+  if(location.protocol==='file:'){ copyRaw('房间码：'+(r||'(未设置)')); toast('本机文件方式：请把房间码和这个文件一起发给大家'); return; }
+  copyRaw('打开：'+shareLink()+'　房间码：'+r);
+}
+function initSync(){
+  syncCfg=loadSyncCfg();
+  doc=loadDoc();
+  myId=getClientId();
+  var hash=new URLSearchParams((location.hash||'').replace(/^#/,''));
+  var qs=new URLSearchParams(location.search||'');
+  ['mode','room','broker','name'].forEach(function(k){
+    var v=hash.get(k)||qs.get(k);
+    if(v) syncCfg[k]=(k==='room')?String(v).toUpperCase():v;
+  });
+  saveSyncCfg();
+  lastView=domView();
+  clearInterval(tickTimer);
+  tickTimer=setInterval(function(){ prunePeers(); renderSyncCard(); },4000);
+  renderSyncCard();
+  renderSharePage();
+  if(syncCfg.mode!=='local') connectSync();
+}
+
+/* --- 状态显示 --- */
+function renderSyncCard(){
+  var dot=$('#syncDot'); if(!dot) return;
+  dot.className='sync-dot'+(syncState==='on'?' on':syncState==='busy'?' busy':syncState==='err'?' err':'');
+  var online=1+Object.keys(peers).length;
+  var t=$('#syncTitle'), s=$('#syncSub');
+  if(!t||!s) return;
+  if(curMode==='local' && syncCfg.mode==='local'){
+    t.textContent='共享未开启';
+    s.textContent='点击设置：多人一起填同一张表（免注册）';
+  } else {
+    var modeName=curMode==='mqtt'?'房间码':curMode==='gist'?'云端文件':curMode==='http'?'自建地址':'仅本机';
+    if(syncState==='on' && curMode==='mqtt') t.textContent='共享中 · '+(syncCfg.room||'')+' · '+online+' 人在线';
+    else if(syncState==='on') t.textContent='共享中 · '+modeName;
+    else if(syncState==='busy') t.textContent='正在连接…';
+    else if(syncState==='err') t.textContent='连接异常';
+    else t.textContent='共享未连接';
+    var ago=lastSyncAt ? (Math.max(1,Math.round((Date.now()-lastSyncAt)/1000))+' 秒前同步') : (syncState==='on'?'已连接，等待同步':'尚未同步');
+    s.textContent=modeName+' · '+ago+(lastErr?(' · '+lastErr):'');
+  }
+  renderStatusBox();
+}
+function renderStatusBox(){
+  var box=$('#statusBox'); if(!box) return;
+  var lines=[];
+  lines.push('状态：'+(syncState==='on'?'已连接':syncState==='busy'?'连接中…':syncState==='err'?'异常':'未连接'));
+  if(curMode!=='local' || syncCfg.mode!=='local'){
+    lines.push('模式：'+(curMode==='mqtt'?'房间码（公开服务器）':curMode==='gist'?'云端文件 Gist':curMode==='http'?'自建地址':'仅本机'));
+    if(curMode==='mqtt') lines.push('房间：'+(syncCfg.room||'(未填)')+'　服务器：'+(syncCfg.broker||'emqx'));
+    if(curMode==='gist') lines.push('Gist：'+(syncCfg.gist||'(保存时自动新建)')+'　平台：'+(syncCfg.gistHost==='gitee'?'Gitee':'GitHub'));
+    if(curMode==='http') lines.push('地址：'+(syncCfg.http||'(未填)'));
+    var names=Object.keys(peers).map(function(k){ return peers[k].n||k; });
+    lines.push('在线：'+(1+names.length)+' 人'+(names.length?('（'+names.join('、')+'）'):''));
+    lines.push('最后同步：'+(lastSyncAt?new Date(lastSyncAt).toLocaleTimeString():'—'));
+    lines.push('本机已记录字段：'+Object.keys(doc.fields).length);
+  }
+  if(lastErr) lines.push('提示：'+lastErr);
+  box.innerHTML=lines.map(function(x){ return esc(x); }).join('<br>');
+}
+
+/* ============ 事件 ============ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  $('#dateInput').value = todayStr();
+  renderGather();
+  renderDorm();
+  Object.keys(ENTRY_CONFIGS).forEach(prefix=>{
+    const container = document.querySelector(`[data-entries="${prefix}"]`);
+    if(container) container.appendChild(renderEntryRow(prefix));
+  });
+  restoreState();
+  updateSums();
+  applyTeamFilter();
+  applyDormGender();
+  goPage('home');
+  initSync();
+});
+document.addEventListener('input', e=>{
+  if(e.target.name && e.target.name.startsWith('a_')){
+    const max = Number(e.target.max);
+    if(e.target.value !== '' && max && Number(e.target.value) > max) e.target.value = String(max);
+    updateSums();
+  }
+  if(e.target.tagName === 'TEXTAREA') autoGrow(e.target);
+  saveState();
+  onLocalChange(false);
+});
+document.addEventListener('change', e=>{
+  saveState();
+  onLocalChange(false);
+  if(e.target && e.target.name === 'gTeam') applyTeamFilter();
+  if(e.target && e.target.name === 'dGender') applyDormGender();
+});
+document.addEventListener('click', e=>{
+  if(e.target.classList.contains('add-btn')){
+    const prefix = e.target.dataset.prefix;
+    document.querySelector(`[data-entries="${prefix}"]`).appendChild(renderEntryRow(prefix));
+    saveState();
+    onLocalChange(false);
+  }
+  if(e.target.classList.contains('e-del')){
+    const row = e.target.closest('.entry-row');
+    const container = row.parentElement;
+    row.remove();
+    if(!container.children.length){
+      container.appendChild(renderEntryRow(container.dataset.entries));
+    }
+    saveState();
+    onLocalChange(false);
+  }
+  const copyBtn = e.target.closest('[data-copy]');
+  if(copyBtn){
+    const t = copyBtn.dataset.copy;
+    copyRaw(BUILDERS[t].fn());
+  }
+});
+$('#modal').addEventListener('click', e=>{
+  if(e.target.id === 'modal') closeModal();
+});
+</script>
+</body>
+</html>
